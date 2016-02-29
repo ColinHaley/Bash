@@ -57,6 +57,8 @@ if check_command ansible ; then
 	winfo "Ansible already installed."
 	exit 1
 else
+	echo "127.0.0.1" > /ansible/inventory_hosts
+	export ANSIBLE_INVENTORY=/ansible/inventory_hosts
 	cd /
 	git clone git://github.com/ansible/ansible.git --recursive
 	cd ansisble/playbooks
