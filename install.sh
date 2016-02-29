@@ -1,9 +1,13 @@
 #!/bin/bash
 
 set -e
+alias echo='echo -e'
+ERROR='\033[0;31m'
+INFO='\033[0;36m' 
+NC='\033[0m'
 
 if [[$EUID -ne 0]]; then
-	echo "This script must be run as root"
+	echo -e "${RED}This script must be run as root${NC}" 1>&2
 	exit 1
 else
 
@@ -11,38 +15,52 @@ check_command() {
 	type "$1" &> /dev/null ;
 }
 
+werr(){
+	printf "${ERROR}$1${NC}\n"
+}
+
+winfo(){
+	printf "${INFO}$1${NC}\n"
+}
+
 # Python Requirement
 if check_command python ; then
-	echo "Python already installed"
+	winfo "Python already installed"
+	if check_command pip ; then
+		winfo "Pip already installed"
+	else
+		winfo "Installing Pip"
+		wget https://bootstrap.pypa.io/get-pip.py > /tmp/get-pip.py
+		python /tmp/get-pip.py                                     
+		pip install paramiko PyYAML Jinja2 httplib2 six            
+	fi
 else
+	winfo "Installing Python"
 	apt-get install python
 
 # Pip installer?
+	winfo "Instlling pip"
 	wget https://bootstrap.pypa.io/get-pip.py > /tmp/get-pip.py
 	python /tmp/get-pip.py
+	pip install paramiko PyYAML Jinja2 httplib2 six
 fi
-
-
 
 # Git Requirement
 if check_command git ; then
-	echo "Git already installed"
+	winfo "Git already installed"
 else
 	apt-get install git
 fi
 
 #create ansible dir
 if check_command ansible ; then
-	echo "Ansible already installed."
+	winfo "Ansible already installed."
 	exit 1
 else
 	cd /
 	git clone git://github.com/ansible/ansible.git --recursive
 	cd ansisble/playbooks
 	source ./hacking/env-setup
-
-		
-
 fi
 
 
