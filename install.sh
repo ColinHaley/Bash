@@ -52,6 +52,13 @@ else
 	apt-get install git
 fi
 
+# Java Requirements
+if check_command java ; then
+	winfo "Java already installed"
+else
+	apt-get install java
+fi
+
 #create ansible dir
 if check_command ansible ; then
 	winfo "Ansible already installed."
