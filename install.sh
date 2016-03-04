@@ -59,18 +59,21 @@ else
 	apt-get install java
 fi
 
-#create ansible dir
-if check_command ansible ; then
+#create ansible dir and check if it exists.
+if ls /ansible > /dev/null; then
 	winfo "Ansible already installed."
 	exit 1
 else
-	echo "[localhost]\n" >> /ansible/inventory_hosts
+	echo "[localhost]" >> /ansible/inventory_hosts
 	echo "127.0.0.1" >> /ansible/inventory_hosts
 	export ANSIBLE_INVENTORY=/ansible/inventory_hosts
 	cd /
 	git clone git://github.com/ansible/ansible.git --recursive
-	cd ansisble/playbooks
+	cd ansisble/
+	
 	source ./hacking/env-setup
+
+
 fi
 
 
